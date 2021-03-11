@@ -34,6 +34,18 @@ const UserSchema = mongoose.Schema({
     role:{
         type:String,
         default: 'User'
+    },
+    joined_date:{
+        type:Date,
+        default:Date.now()
+    },
+    following:{
+        type:Array,
+        default:[]
+    },
+    followers:{
+        type:Array,
+        default:[]
     }
 })
 
