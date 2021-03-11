@@ -10,7 +10,8 @@ const schema = Joi.object({
     name: Joi.string().min(6).required(),
     email:Joi.string().min(6).required().email(),
     password:Joi.string().min(6).required(),
-    dob:Joi.string().required().isoDate()
+    dob:Joi.string().required().isoDate(),
+    role:Joi.string()
 })
 
 
@@ -26,7 +27,8 @@ Router.post('/register', async(req,res)=>{
         name: req.body.name,
         email: req.body.email,
         password: hashed_password,
-        DOB: req.body.dob
+        DOB: req.body.dob,
+        role: req.body.role? req.body.role: 'User'
     })
     try{
         await user.save()
@@ -38,6 +40,7 @@ Router.post('/register', async(req,res)=>{
 })
 
 // Get all users
+
 
 // Update user
 
