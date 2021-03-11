@@ -11,8 +11,7 @@ const registerSchema = Joi.object({
     name: Joi.string().min(6).required(),
     email:Joi.string().min(6).required().email(),
     password:Joi.string().min(6).required(),
-    dob:Joi.string().required().isoDate(),
-    role:Joi.string()
+    dob:Joi.string().required().isoDate()
 })
 
 const loginSchema = Joi.object({
@@ -33,8 +32,7 @@ Router.post('/register', async(req,res)=>{
         name: req.body.name,
         email: req.body.email,
         password: hashed_password,
-        DOB: req.body.dob,
-        role: req.body.role? req.body.role: 'User'
+        DOB: req.body.dob
     })
     try{
         await user.save()
@@ -61,6 +59,7 @@ Router.post('/login',async(req, res)=>{
             const isValidPswd = await bcrypt.compareSync(user.password, data.password);
             if(isValidPswd){
                 const token = Jwt.sign({id:data._id}, process.env.JWTSECRET, {expiresIn:'1d'})
+                res.cookie('x-access-token', token)
                 res.status(200).send({token})
             }
 
