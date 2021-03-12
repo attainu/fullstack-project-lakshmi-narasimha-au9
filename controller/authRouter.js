@@ -76,29 +76,52 @@ Router.post('/login',async(req, res)=>{
 
 // Get all users
 Router.get('/users', async(req,res)=>{
-    const token = req.headers['x-access-token'];
-    const start = req.query.start?Number(req.query.start):0
-    Jwt.verify(token, process.env.JWTSECRET, async(err, data)=>{
-        if (err) return res.send('invalid token');
-        try{
-            let user = await User.findById(data.id)
-            if(user.role=="Admin"){
-                const  users = await User.find({},{skip:start},{limit:10}).exec();
-                res.status(200).send(users)
-            }else{
-                res.status(200).send("You're not authorized to get usersdata")
-            }
-            
-            
-        }catch(err){
-            res.send({err, error:"invalid userId"})
-        }
-        
-
-    })
+    if(req.headers['x-access-token']){
+        const token = req.headers['x-access-token'];
+            const start = req.query.start?Number(req.query.start):0
+            Jwt.verify(token, process.env.JWTSECRET, async(err, data)=>{
+                if (err) return res.send('invalid token');
+                try{
+                    let user = await User.findById(data.id)
+                    if(user.role=="Admin"){
+                        const  users = await User.find({},{skip:start},{limit:10}).exec();
+                        res.status(200).send(users)
+                    }else{
+                        res.status(200).send("You're not authorized to get usersdata")
+                    }
+                    
+                }catch(err){
+                    res.json({err, error:"invalid userId"})
+                }
+            })    
+    }
+    else{
+        res.status(403).json("Bad request. You're not authorized")
+    }
+    
 })
 
-
+// get user profile
+Router.get('/profile', (req,res)=>{
+    if(req.headers.cookie){
+        try{
+            let token = req.headers.cookie.split("x-access-token=")[1]
+            Jwt.verify(token, process.env.JWTSECRET, async(err, data)=>{
+                if (err) return res.send("invalid token")
+                var user = await User.findById(data.id)
+                user.password=undefined;
+                res.status(200).json(user);
+            })
+        }catch{
+            res.status(403).send('token required')
+        }
+        
+    }
+    else{
+        res.status(403).send("Authentication required")
+    }
+    
+})
 
 // Update user
 
