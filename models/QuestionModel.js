@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+
+// question fields
+// questioner, timestamp, comments, upvotes, downvotes, title, description, category,answers
+
 const QuestionSchema = mongoose.Schema({
     questioner:{
         type:String, 
@@ -13,17 +17,27 @@ const QuestionSchema = mongoose.Schema({
         type: Array,
         default:[]
     },
-    catogory:{
+    category:{
         type: String,
         required:true
     },
     title:{
         type: String,
-        required: true
+        required: true,
+        maxLength: 2048
     },
     detail:{
         type: String,
-        maxLength
+        required:true
+    },
+    votes:{
+        type:Array,
+        default:[]
+    },
+    
+    comments:{
+        type:Array,
+        default:[]
     }
 })
 
