@@ -124,6 +124,39 @@ Router.get('/profile', (req,res)=>{
 })
 
 // Update user
+Router.put('/update/profile', async(req, res)=>{
+    if(req.headers.cookie){
+        try{
+            let token = req.headers.cookie.split("x-access-token=")[1]
+            Jwt.verify(token, process.env.JWTSECRET, async(err, data)=>{
+                if (err) return res.send("invalid token")
+                let user = await User.findById(data.id)
+                const updatedUser = {
+                    name: req.body.name ? req.body.name : user.name,
+                    email: req.body.email? req.body.email : user.email,
+                    DOB: req.body.dob ? req.body.dob: user.DOB
+                }
+                try{
+                    await User.updateOne({_id:data.id}, updatedUser, {runValidators:true},async (error, data)=>{
+                        if (error) return error
+                        res.status(200).send({status:"success"})
+                        } )
+                }
+                catch(err){
+                    res.send(err)
+                }
+                  
+            })
+        }
+        catch{
+            res.status(403).send("You're not authorized")
+
+        }
+    }
+    else{
+        res.status(403).send("Authentication required")
+    }
+})
 
 // Deactivate user
 
