@@ -1,6 +1,7 @@
 const express = require('express');
 const Router = express.Router();
 const Question = require('../models/QuestionModel');
+const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
 require('dotenv');
 
@@ -14,14 +15,13 @@ Router.post('/new', (req,res)=>{
             try{
                 if(error) return error;
                 const userId = data.id;
-                console.log(data)
                 const question = new Question({
                     questioner: userId,
                     category:req.body.category,
                     question: req.body.question
                 })
                 try{
-                    const qdata = await question.save((err,data)=>{
+                    await question.save((err)=>{
                         if(err) return err;
                         res.status(200).send({message:"question published successfully"});
                     })
@@ -42,12 +42,46 @@ Router.post('/new', (req,res)=>{
 
 // get questions of respective user 
 Router.get('/',(req,res)=>{
-    const q = req.query;
-    res.send(q)
+    if(req.headers.cookie){
+        const token = req.headers.cookie.split("x-access-token=")[1];
+        jwt.verify(token, process.env.JWTSECRET, async(err, data)=>{
+            try{
+                if (err) return err;
+                let userId = data.id;
+                try{
+                    await Question.find({questioner:userId}, (err, resp)=>{
+                        if (err) return err;
+                        res.status(200).send(resp)
+                    })
+                }
+                catch(err){
+                    res.send(err);
+
+                }
+                
+            }
+            catch(error){
+
+            }
+            
+        })
+    }
+    else{
+        res.status(403).send({error:"Login to view your questions"})
+    }
+    
 })
 
 
 // search questions
+Router.get("/search", (req, res)=>{
+    if(req.query){
+        const q = req.query;
+        res.send(q)
+    }else{
+        res.status(403).send({error:"search query missing"})
+    }
+})
 
 // update question
 
