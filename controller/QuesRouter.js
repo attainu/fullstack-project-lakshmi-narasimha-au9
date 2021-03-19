@@ -13,16 +13,16 @@ Router.post('/new', (req,res)=>{
         jwt.verify(token, process.env.JWTSECRET, async(error, data)=>{
             try{
                 if(error) return error;
-                const userId = data._id;
+                const userId = data.id;
+                console.log(data)
                 const question = new Question({
                     questioner: userId,
                     category:req.body.category,
-                    title: req.body.title,
-                    detail:req.body.detail
+                    question: req.body.question
                 })
                 try{
-                    await question.save((err)=>{
-                        if (err) return err;
+                    const qdata = await question.save((err,data)=>{
+                        if(err) return err;
                         res.status(200).send({message:"question published successfully"});
                     })
                 }catch(err){
@@ -42,7 +42,8 @@ Router.post('/new', (req,res)=>{
 
 // get questions of respective user 
 Router.get('/',(req,res)=>{
-    
+    const q = req.query;
+    res.send(q)
 })
 
 
