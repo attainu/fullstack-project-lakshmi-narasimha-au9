@@ -1,25 +1,24 @@
 const mongoose = require('mongoose');
 
-// VOTES will have userid and value 1 for upvote 0 for down vote and vote for comment/answer/question and Id
+// VOTES will have userid and value bolean for question 
 
-const VoteSchema = mongoose.Schema({
+const QVoteSchema = mongoose.Schema({
+    // voter id
     vote_by:{
         type:String,
         required: true
     },
-    vote_for:{
+    vote_Qid:{
         type:String,
         required: true
     },
-    vote_for_id:{
+    vote_Aid:{
         type:String,
         required: true
     },
-    value:{
-        type:Number,
-        max:1,
-        min:-1,
-        default:0
+    vote:{
+        type:boolean,
+        required: true
     }
 })
 

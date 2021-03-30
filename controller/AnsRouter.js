@@ -56,7 +56,6 @@ const replaceImageUrlsFromReqestString = async(s, urls)=>{
 // authenticate users
 const authenticate = (cookie)=>{
   let is_auth;
-  console.log(cookie)
   try{
     is_auth = jwt.verify(cookie, process.env.JWTSECRET,(err,data)=>{
 
@@ -67,12 +66,12 @@ const authenticate = (cookie)=>{
   catch(err){
     is_auth = {auth:false, error:err}
   }
-  console.log(is_auth)
   return is_auth; 
 } 
 
 // Route to post an answer
 Router.post('/',async(req, res)=>{
+  const { headers: { cookie } } = req
   let is_auth = await req.headers.cookie? authenticate(req.headers.cookie.split('x-access-token=')[1]):false; 
   if(is_auth.auth){
     let data = req.body.data
