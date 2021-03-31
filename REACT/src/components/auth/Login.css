@@ -120,6 +120,11 @@
   background-color: rgb(236, 236, 236);
 }
 
+.login__inputField > .input-border-email-red,
+.login__inputField > .input-border-password-red {
+  border: 1px solid red;
+}
+
 .login__forgButt {
   padding-left: 10px;
   display: flex;

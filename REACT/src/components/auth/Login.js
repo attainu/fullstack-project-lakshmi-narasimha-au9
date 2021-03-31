@@ -1,15 +1,32 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import Axios from "axios";
 import "./Login.css";
 import ArrowForwardIosIcon from "@material-ui/icons/ArrowForwardIos";
 
+import { login } from "../../features/userSlice";
+
 function Login() {
   const [email, setEmail] = useState("");
+  const [emailField, SetEmailField] = useState(false);
   const [password, setPassword] = useState("");
+  const [passwordField, SetPasswordField] = useState(false);
 
-  const signIn = () => {};
+  const dispatch = useDispatch();
 
-  const handleSignIn = (e) => {
-    e.preventDefault();
+  const loginHandler = () => {
+    Axios({
+      method: "POST",
+      url: "https://serene-coast-48146.herokuapp.com",
+      data: {
+        email,
+        password,
+      },
+    })
+      .then((res) => {
+        dispatch(login(res.data.token));
+      })
+      .catch((err) => alert(err.message));
   };
 
   const registerSignIn = (e) => {
@@ -27,7 +44,7 @@ function Login() {
         <div className="login__desc">
           <p>A Place to Share knowledge and better understand the world</p>
           <p style={{ color: "royalblue", fontSize: "25px" }}>
-            HandCrafted with ❤️ by{" "}
+            HandCrafted by{" "}
           </p>
           <h3>Sujay + Lucky</h3>
         </div>
@@ -39,7 +56,7 @@ function Login() {
                 src="https://media-public.canva.com/MADnBiAubGA/3/screen.svg"
                 alt=""
               />
-              <p onClick={signIn}>Continue With Google</p>
+              <p>Continue With Google</p>
             </div>
             <div className="login__authOption">
               <img
@@ -74,16 +91,38 @@ function Login() {
             <div className="login__inputFields">
               <div className="login__inputField">
                 <input
+                  className={
+                    emailField
+                      ? /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+                          email
+                        )
+                        ? ""
+                        : "input-border-email-red"
+                      : ""
+                  }
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    SetEmailField(true);
+                    setEmail(e.target.value);
+                  }}
                   type="text"
                   placeholder="Email"
                 />
               </div>
               <div className="login__inputField">
                 <input
+                  className={
+                    passwordField
+                      ? password.length < 6
+                        ? "input-border-email-red"
+                        : ""
+                      : ""
+                  }
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    SetPasswordField(true);
+                    setPassword(e.target.value);
+                  }}
                   type="password"
                   placeholder="Password"
                 />
@@ -91,7 +130,7 @@ function Login() {
             </div>
             <div className="login__forgButt">
               <small>Forgot Password?</small>
-              <button onClick={handleSignIn}>Login</button>
+              <button onClick={loginHandler}>Login</button>
             </div>
             <button onClick={registerSignIn}>Register</button>
           </div>
