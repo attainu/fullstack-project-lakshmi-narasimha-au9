@@ -27,7 +27,7 @@ const QuestionSchema = mongoose.Schema({
     },
     votes:{
         type:Array,
-        default:[]
+        default:{}
     },
     upvotes:{
         type:Number,
