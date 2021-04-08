@@ -1,0 +1,15 @@
+.profileMain {
+    display: flex;
+    padding: 10px;
+}
+.profileMain img{
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+}
+.profileMain .details{
+    align-self: center;
+}
+.profileMain .details h1{
+    margin-bottom: 5px;
+}
